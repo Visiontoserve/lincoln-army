@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جيش لينكولن - لوحة الماكرو والتكتيك | OneState RP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        army: {
+                            50: '#f4f7f4',
+                            100: '#e3eae3',
+                            500: '#4d684e',
+                            600: '#3c523d',
+                            700: '#2d3e2e',
+                            800: '#1e291f',
+                            900: '#141d15',
+                            gold: '#d97706',
+                        },
+                        dark: {
+                            bg: '#0b0f0c',
+                            card: '#131b14',
+                            border: '#233225',
+                            hover: '#2d3f2f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0b0f0c;
+            color: #ecf3ed;
+            background-image: radial-gradient(#1e2c1f 0.75px, transparent 0.75px);
+            background-size: 24px 24px;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #233225;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3c523d;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-600 selection:text-white">
+
+    <!-- Top Navigation / Header -->
+    <header class="bg-dark-card border-b border-dark-border sticky top-0 z-30 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-tr from-army-600 to-emerald-500 p-3 rounded-xl shadow-lg border border-emerald-500/30 text-white">
+                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-wider text-white flex items-center gap-2">
+                            LINCOLN ARMY <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-md border border-emerald-500/30 font-bold">جيش لينكولن</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">منظومة الاختصارات والماكرو التكتيكي - OneState RP</p>
+                    </div>
+                </div>
+
+                <!-- Action Bar: Add Macro & Search -->
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button onclick="openModal()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg hover:shadow-emerald-600/30 flex items-center justify-center gap-2 active:scale-95 border border-emerald-400/30">
+                        <i class="fa-solid fa-plus-square"></i>
+                        <span>إضافة أمر تكتيكي</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="mt-4 flex flex-col md:flex-row gap-3 items-center justify-between">
+                <!-- Search Input -->
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-crosshairs absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="filterMacros()" placeholder="بحث في أوامر وراديو الجيش..." class="w-full bg-slate-950/80 border border-dark-border focus:border-emerald-500 text-sm rounded-xl pr-10 pl-4 py-2.5 text-slate-200 placeholder-slate-500 focus:outline-none transition-all">
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 text-xs sm:text-sm no-scrollbar">
+                    <button onclick="setCategory('all')" id="tab-all" class="category-tab active-tab bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">الكل</button>
+                    <button onclick="setCategory('base')" id="tab-base" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">تأمين القاعدة</button>
+                    <button onclick="setCategory('radio')" id="tab-radio" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">شفرات الراديو</button>
+                    <button onclick="setCategory('patrol')" id="tab-patrol" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">الدوريات والأشباك</button>
+                    <button onclick="setCategory('rp')" id="tab-rp" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">RP تحية ورتب</button>
+                    <button onclick="setCategory('custom')" id="tab-custom" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">أوامري المخصصة <span id="custom-count" class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full mr-1">0</span></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-10 z-50 border border-emerald-400/40">
+            <i class="fa-solid fa-circle-check text-xl"></i>
+            <span id="toast-message" class="font-bold text-sm">تم نسخ الأمر العسكري بنجاح!</span>
+        </div>
+
+        <!-- Grid Cards Container -->
+        <div id="macrosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Dynamic items populated by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+            <div class="bg-dark-card border border-dark-border p-6 rounded-full text-slate-600 mb-4 text-3xl">
+                <i class="fa-solid fa-person-military-rifle"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-300">لا توجد أفراد أو أوامر تطابق البحث</h3>
+            <p class="text-xs text-slate-500 mt-1">تأكد من كتابة الشفرة بشكل صحيح أو أضف أمراً جديداً.</p>
+        </div>
+    </main>
+
+    <!-- Add/Edit Macro Modal -->
+    <div id="macroModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity">
+        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <div class="flex items-center justify-between pb-4 border-b border-dark-border mb-4">
+                <h3 id="modalTitle" class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-square-plus text-emerald-500"></i>
+                    <span>إضافة أمر تكتيكي لجيش لينكولن</span>
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="macroForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <input type="hidden" id="macroId">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">اسم الأمر / التكتيك</label>
+                    <input type="text" id="macroTitle" required placeholder="مثال: تحذير البوابة الرئيسية" class="w-full bg-slate-950 border border-dark-border focus:border-emerald-500 text-sm rounded-xl px-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">الفئة العسكرية</label>
+                    <select id="macroCategory" class="w-full bg-slate-950 border border-dark-border focus:border-emerald-500 text-sm rounded-xl px-3.5 py-2.5 text-slate-200 focus:outline-none">
+                        <option value="base">تأمين القاعدة والخطوط</option>
+                        <option value="radio">شفرات الراديو والاتصال</option>
+                        <option value="patrol">الدوريات والاشتباك</option>
+                        <option value="rp">أوامر الـ RP والرتب</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">نص الماكرو (الذي سيتم نسخه)</label>
+                    <textarea id="macroText" required rows="3" placeholder="مثال: [Lincoln Army]: منطقة عسكرية مغلقة! ابتعد فوراً أو سيتم التعامل." class="w-full bg-slate-950 border border-dark-border focus:border-emerald-500 text-sm rounded-xl px-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-all">إلغاء</button>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg transition-all border border-emerald-400/20">حفظ الأمر</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-card border-t border-dark-border py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>Lincoln Army Fast-Macro Console — OneState RP</span>
+            <span class="text-emerald-500/80 font-mono">STATUS: OPERATIONAL // SECURE</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Preset Default Macros for Lincoln Army
+        const defaultMacros = [
+            // Base Defense & Perimeter
+            { id: 'army-1', title: 'تحذير اقتراب من قاعدة لينكولن', category: 'base', text: 'تحذير عسكري من جيش لينكولن! أنت تقترب من منطقة عسكرية محظورة، تراجع فوراً لسلامتك!', isDefault: true },
+            { id: 'army-2', title: 'تحذير نهائي وقاتل (كود أحمر)', category: 'base', text: 'تحذير نهائي! مغادرة المنطقة خلال 5 ثوانٍ وإلا سيتم فتح النار المباشرة بداعي التسلل!', isDefault: true },
+            { id: 'army-3', title: 'إغلاق البوابة الرئيسية (Gate Lockdown)', category: 'base', text: '[Lincoln Army]: إغلاق البوابات الرئيسية للقاعدة وتفعيل حالة التأمين القصوى كود-RED!', isDefault: true },
+            { id: 'army-4', title: 'تفتيش المركبات عند المدخل', category: 'base', text: '/me يطلب من السائق إطفاء المحرك وإبراز الهوية العسكرية أو التصريح قبل الدخول', isDefault: true },
+
+            // Tactical Radio Codes
+            { id: 'army-5', title: 'راديو - نداء جاري الدورية (Code 1)', category: 'radio', text: '[الراديو العسكري]: وحدة لينكولن-1 تبدأ دورية تمشيطية في القطاع الشمالي، الوضع أمن (Code 1).', isDefault: true },
+            { id: 'army-6', title: 'راديو - اشتباك وإطلاق نار (Code 3)', category: 'radio', text: '[الراديو العسكري]: كود 3! تعامل مع أهداف معادية في موقعنا الحالي، يرجى إرسال تعزيزات فورا!', isDefault: true },
+            { id: 'army-7', title: 'راديو - حظر جوي وإسقاط طيران', category: 'radio', text: '[الراديو العسكري]: تنبيه لكافة الوحدات، تحليق طيران غير مصرح به فوق القاعدة، تجهيز الدفاعات الجوية.', isDefault: true },
+            { id: 'army-8', title: 'راديو - إخلاء وسحب مصابين', category: 'radio', text: '[الراديو العسكري]: ميدي إيفاك عاجل! لدينا عنصر مصاب في الميدان بحاجة إلى إسعاف سريع.', isDefault: true },
+
+            // Patrol & Engagement
+            { id: 'army-9', title: 'استيقاف مرتكب مخالفة تكتيكية', category: 'patrol', text: 'من جيش لينكولن: أوقف المركبة جانب الطريق فوراً وانزل ويداك فوق رأسك!', isDefault: true },
+            { id: 'army-10', title: 'تجريد الموقوف من السلاح', category: 'patrol', text: '/me يقوم بسحب أسلحة المشتبه به وتأمينها في الحزام التكتيكي قبل نقل الحراسة', isDefault: true },
+            { id: 'army-11', title: 'إنشاء حاجز تفتيش عسكري', category: 'patrol', text: '[Lincoln Army]: إقامة نقطة تفتيش عسكرية مؤقتة، يرجى التخفيف من السرعة والتزام المسار.', isDefault: true },
+
+            // RP & Salutes / Ranks
+            { id: 'army-12', title: 'أداء التحية العسكرية (Salute)', category: 'rp', text: '/me يقف باستقامة يؤدي التحية العسكرية للضابط المسؤول بحزم', isDefault: true },
+            { id: 'army-13', title: 'تقديم بطاقة العضوية والبطاقة العسكرية', category: 'rp', text: '/me يخرج الشارة العسكرية لجيش لينكولن ويبرزها للتأكد من الرتبة والهوية', isDefault: true },
+            { id: 'army-14', title: 'تقديم التقرير الميداني', category: 'rp', text: '/me يقدم التقرير الميداني للقيادة مع بيان تفاصيل الدورية والملاحظات', isDefault: true }
+        ];
+
+        // State Management
+        let customMacros = JSON.parse(localStorage.getItem('lincoln_custom_macros') || '[]');
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // Category Badge Details
+        const categoryMap = {
+            base: { label: 'القاعدة والتأمين', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
+            radio: { label: 'راديو عسكري', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+            patrol: { label: 'اشتباك ودورية', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+            rp: { label: 'RP ورتب', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
+        };
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMacros();
+            updateCustomCount();
+        });
+
+        // Get All Combined Macros
+        function getAllMacros() {
+            return [...defaultMacros, ...customMacros];
+        }
+
+        // Render Cards
+        function renderMacros() {
+            const grid = document.getElementById('macrosGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            const all = getAllMacros();
+            const filtered = all.filter(macro => {
+                const matchesCategory = 
+                    currentCategory === 'all' ? true :
+                    currentCategory === 'custom' ? !macro.isDefault :
+                    macro.category === currentCategory;
+
+                const matchesSearch = 
+                    macro.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    macro.text.toLowerCase().includes(searchQuery.toLowerCase());
+
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+
+                filtered.forEach(macro => {
+                    const badge = categoryMap[macro.category] || { label: 'عسكري', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' };
+                    const card = document.createElement('div');
+                    card.className = 'bg-dark-card border border-dark-border hover:border-emerald-700/60 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 shadow-md group relative';
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md border ${badge.color}">
+                                    ${badge.label}
+                                </span>
+                                ${!macro.isDefault ? `
+                                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onclick="editMacro('${macro.id}')" class="text-slate-400 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-800 transition-all text-xs" title="تعديل">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button onclick="deleteMacro('${macro.id}')" class="text-slate-400 hover:text-rose-400 p-1 rounded-lg hover:bg-slate-800 transition-all text-xs" title="حذف">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                ` : '<span class="text-[10px] text-slate-600 font-mono">SOP</span>'}
+                            </div>
+                            <h4 class="font-bold text-slate-100 text-sm mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-angle-left text-xs text-emerald-500"></i>
+                                ${escapeHtml(macro.title)}
+                            </h4>
+                            <p class="text-xs text-slate-300 line-clamp-3 bg-slate-950/80 p-2.5 rounded-xl border border-slate-900 font-mono dir-rtl text-right break-words mb-4 select-all">
+                                ${escapeHtml(macro.text)}
+                            </p>
+                        </div>
+                        <button onclick="copyToClipboard('${escapeJsString(macro.text)}')" class="w-full bg-slate-900 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-900/50 hover:border-emerald-500 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 active:scale-95 group-hover:shadow-lg group-hover:shadow-emerald-600/20">
+                            <i class="fa-regular fa-copy text-sm"></i>
+                            <span>نسخ الأمر التكتيكي</span>
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // Copy Handler
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast('تم نسخ الأمر إلى الحافظة!');
+            } catch (err) {
+                showToast('حدث خطأ في النسخ تلقائياً');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // Show Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10');
+            }, 2500);
+        }
+
+        // Filter Category
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('bg-emerald-600', 'text-white');
+                tab.classList.add('bg-dark-card', 'border', 'border-dark-border', 'text-slate-300');
+            });
+
+            const activeTab = document.getElementById(`tab-${cat}`);
+            if (activeTab) {
+                activeTab.classList.remove('bg-dark-card', 'border', 'border-dark-border', 'text-slate-300');
+                activeTab.classList.add('bg-emerald-600', 'text-white');
+            }
+
+            renderMacros();
+        }
+
+        // Search Input Handler
+        function filterMacros() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderMacros();
+        }
+
+        // Modal Controls
+        function openModal(editId = null) {
+            const modal = document.getElementById('macroModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('macroForm');
+
+            form.reset();
+            document.getElementById('macroId').value = '';
+
+            if (editId) {
+                const macro = customMacros.find(m => m.id === editId);
+                if (macro) {
+                    document.getElementById('macroId').value = macro.id;
+                    document.getElementById('macroTitle').value = macro.title;
+                    document.getElementById('macroCategory').value = macro.category;
+                    document.getElementById('macroText').value = macro.text;
+                    modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-500"></i> <span>تعديل الأمر العسكري</span>`;
+                }
+            } else {
+                modalTitle.innerHTML = `<i class="fa-solid fa-square-plus text-emerald-500"></i> <span>إضافة أمر تكتيكي لجيش لينكولن</span>`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('macroModal').classList.add('hidden');
+        }
+
+        // Handle Add/Edit Form Submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('macroId').value;
+            const title = document.getElementById('macroTitle').value.trim();
+            const category = document.getElementById('macroCategory').value;
+            const text = document.getElementById('macroText').value.trim();
+
+            if (!title || !text) return;
+
+            if (id) {
+                const index = customMacros.findIndex(m => m.id === id);
+                if (index !== -1) {
+                    customMacros[index] = { ...customMacros[index], title, category, text };
+                    showToast('تم تعديل الأمر بنجاح!');
+                }
+            } else {
+                const newMacro = {
+                    id: 'custom-' + Date.now(),
+                    title,
+                    category,
+                    text,
+                    isDefault: false
+                };
+                customMacros.unshift(newMacro);
+                showToast('تمت إضافة الأمر العسكري بنجاح!');
+            }
+
+            saveCustomMacros();
+            closeModal();
+            renderMacros();
+            updateCustomCount();
+        }
+
+        // Delete Custom Macro
+        function deleteMacro(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الأمر العسكري؟')) {
+                customMacros = customMacros.filter(m => m.id !== id);
+                saveCustomMacros();
+                renderMacros();
+                updateCustomCount();
+                showToast('تم حذف الأمر المخصص');
+            }
+        }
+
+        // Edit Custom Macro trigger
+        function editMacro(id) {
+            openModal(id);
+        }
+
+        // Save Custom Macros to LocalStorage
+        function saveCustomMacros() {
+            localStorage.setItem('lincoln_custom_macros', JSON.stringify(customMacros));
+        }
+
+        // Update Counter for Custom Items
+        function updateCustomCount() {
+            document.getElementById('custom-count').textContent = customMacros.length;
+        }
+
+        // Utility: Escape HTML
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        // Utility: Escape String for inline JS parameters
+        function escapeJsString(str) {
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+        }
+    </script>
+</body>
+</html>
