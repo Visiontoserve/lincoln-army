@@ -3,470 +3,658 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جيش لينكولن - لوحة الماكرو والتكتيك | OneState RP</title>
-    <!-- Tailwind CSS -->
+    <title>جيش لينكولن - Lincoln Army | OneState RP</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Cairo -->
+    <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        army: {
-                            50: '#f4f7f4',
-                            100: '#e3eae3',
-                            500: '#4d684e',
-                            600: '#3c523d',
-                            700: '#2d3e2e',
-                            800: '#1e291f',
-                            900: '#141d15',
-                            gold: '#d97706',
-                        },
-                        dark: {
-                            bg: '#0b0f0c',
-                            card: '#131b14',
-                            border: '#233225',
-                            hover: '#2d3f2f'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #0b0f0c;
-            color: #ecf3ed;
-            background-image: radial-gradient(#1e2c1f 0.75px, transparent 0.75px);
-            background-size: 24px 24px;
+            background-color: #0b0f19;
+            color: #e2e8f0;
         }
+        .tab-btn.active {
+            background-color: #1e293b;
+            color: #fbbf24;
+            border-bottom: 3px solid #fbbf24;
+        }
+        .toast {
+            transition: all 0.3s ease-in-out;
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0b0f0c;
+            background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
-            background: #233225;
+            background: #334155;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #3c523d;
+            background: #475569;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-600 selection:text-white">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Top Navigation / Header -->
-    <header class="bg-dark-card border-b border-dark-border sticky top-0 z-30 shadow-2xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-tr from-army-600 to-emerald-500 p-3 rounded-xl shadow-lg border border-emerald-500/30 text-white">
-                        <i class="fa-solid fa-shield-halved text-2xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-black tracking-wider text-white flex items-center gap-2">
-                            LINCOLN ARMY <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-md border border-emerald-500/30 font-bold">جيش لينكولن</span>
-                        </h1>
-                        <p class="text-xs text-slate-400">منظومة الاختصارات والماكرو التكتيكي - OneState RP</p>
-                    </div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast fixed bottom-5 left-5 bg-amber-500 text-slate-950 font-bold px-6 py-3 rounded-lg shadow-2xl z-50 flex items-center space-x-2 space-x-reverse border border-amber-300">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toast-msg">تم نسخ النص بنجاح!</span>
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-slate-900 border-b border-amber-500/30 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <div class="relative w-16 h-16 rounded-full bg-slate-800 border-2 border-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 overflow-hidden shrink-0">
+                    <i class="fa-solid fa-shield-halved text-amber-500 text-3xl"></i>
+                    <i class="fa-solid fa-star text-amber-300 text-xs absolute top-2"></i>
                 </div>
-
-                <!-- Action Bar: Add Macro & Search -->
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <button onclick="openModal()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg hover:shadow-emerald-600/30 flex items-center justify-center gap-2 active:scale-95 border border-emerald-400/30">
-                        <i class="fa-solid fa-plus-square"></i>
-                        <span>إضافة أمر تكتيكي</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Search & Filters -->
-            <div class="mt-4 flex flex-col md:flex-row gap-3 items-center justify-between">
-                <!-- Search Input -->
-                <div class="relative w-full md:w-80">
-                    <i class="fa-solid fa-crosshairs absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500 text-sm"></i>
-                    <input type="text" id="searchInput" oninput="filterMacros()" placeholder="بحث في أوامر وراديو الجيش..." class="w-full bg-slate-950/80 border border-dark-border focus:border-emerald-500 text-sm rounded-xl pr-10 pl-4 py-2.5 text-slate-200 placeholder-slate-500 focus:outline-none transition-all">
-                </div>
-
-                <!-- Category Tabs -->
-                <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 text-xs sm:text-sm no-scrollbar">
-                    <button onclick="setCategory('all')" id="tab-all" class="category-tab active-tab bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">الكل</button>
-                    <button onclick="setCategory('base')" id="tab-base" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">تأمين القاعدة</button>
-                    <button onclick="setCategory('radio')" id="tab-radio" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">شفرات الراديو</button>
-                    <button onclick="setCategory('patrol')" id="tab-patrol" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">الدوريات والأشباك</button>
-                    <button onclick="setCategory('rp')" id="tab-rp" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">RP تحية ورتب</button>
-                    <button onclick="setCategory('custom')" id="tab-custom" class="category-tab bg-dark-card border border-dark-border text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all">أوامري المخصصة <span id="custom-count" class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full mr-1">0</span></button>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-amber-400 tracking-wide flex items-center gap-2">
+                        <span>أهلاً بك في جيش لينكولن</span>
+                    </h1>
+                    <p class="text-xs md:text-sm text-slate-400 font-semibold">
+                        المقر القيادي | فصيل الجيش - OneState RP
+                    </p>
                 </div>
             </div>
+
+            <!-- Search Bar -->
+            <div class="w-full md:w-80 relative">
+                <input type="text" id="searchInput" onkeyup="searchCards()" placeholder="بحث في الأوامر والقواعد..." 
+                    class="w-full bg-slate-800 text-slate-100 placeholder-slate-400 text-sm rounded-xl px-4 py-2.5 pr-10 border border-slate-700 focus:outline-none focus:border-amber-500 transition">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-7xl mx-auto px-4 mt-2 flex overflow-x-auto space-x-1 space-x-reverse text-sm font-bold no-scrollbar">
+            <button onclick="switchTab('commands')" id="btn-commands" class="tab-btn active px-5 py-3 rounded-t-lg transition flex items-center gap-2 shrink-0">
+                <i class="fa-solid fa-terminal text-amber-400"></i> الأوامر الميدانية
+            </button>
+            <button onclick="switchTab('events')" id="btn-events" class="tab-btn px-5 py-3 rounded-t-lg transition flex items-center gap-2 shrink-0 text-slate-400 hover:text-amber-300">
+                <i class="fa-solid fa-skull text-rose-500"></i> أوامر الأحداث (13)
+            </button>
+            <button onclick="switchTab('rules-rp')" id="btn-rules-rp" class="tab-btn px-5 py-3 rounded-t-lg transition flex items-center gap-2 shrink-0 text-slate-400 hover:text-amber-300">
+                <i class="fa-solid fa-scroll text-amber-400"></i> قواعد RP والجزاءات
+            </button>
+            <button onclick="switchTab('ranks')" id="btn-ranks" class="tab-btn px-5 py-3 rounded-t-lg transition flex items-center gap-2 shrink-0 text-slate-400 hover:text-amber-300">
+                <i class="fa-solid fa-sitemap text-amber-400"></i> الهيكل والرتب
+            </button>
+            <button onclick="switchTab('rules-internal')" id="btn-rules-internal" class="tab-btn px-5 py-3 rounded-t-lg transition flex items-center gap-2 shrink-0 text-slate-400 hover:text-amber-300">
+                <i class="fa-solid fa-book-bookmark text-amber-400"></i> القوانين الداخلية
+            </button>
+            <button onclick="switchTab('custom')" id="btn-custom" class="tab-btn px-5 py-3 rounded-t-lg transition flex items-center gap-2 shrink-0 text-slate-400 hover:text-amber-300">
+                <i class="fa-solid fa-pen-to-square text-amber-400"></i> مخصصاتي
+            </button>
         </div>
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
-        <!-- Toast Notification -->
-        <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-10 z-50 border border-emerald-400/40">
-            <i class="fa-solid fa-circle-check text-xl"></i>
-            <span id="toast-message" class="font-bold text-sm">تم نسخ الأمر العسكري بنجاح!</span>
-        </div>
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
 
-        <!-- Grid Cards Container -->
-        <div id="macrosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Dynamic items populated by JavaScript -->
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
-            <div class="bg-dark-card border border-dark-border p-6 rounded-full text-slate-600 mb-4 text-3xl">
-                <i class="fa-solid fa-person-military-rifle"></i>
+        <!-- TAB 1: FIELD COMMANDS -->
+        <section id="tab-commands" class="tab-content grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="col-span-1 md:col-span-2 mb-2">
+                <h2 class="text-xl font-bold text-amber-400 flex items-center gap-2 border-r-4 border-amber-500 pr-3">
+                    <i class="fa-solid fa-bullhorn"></i> أوامر التعامل مع الدخلاء والمقابلات
+                </h2>
             </div>
-            <h3 class="text-lg font-bold text-slate-300">لا توجد أفراد أو أوامر تطابق البحث</h3>
-            <p class="text-xs text-slate-500 mt-1">تأكد من كتابة الشفرة بشكل صحيح أو أضف أمراً جديداً.</p>
-        </div>
-    </main>
 
-    <!-- Add/Edit Macro Modal -->
-    <div id="macroModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity">
-        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <div class="flex items-center justify-between pb-4 border-b border-dark-border mb-4">
-                <h3 id="modalTitle" class="text-lg font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-square-plus text-emerald-500"></i>
-                    <span>إضافة أمر تكتيكي لجيش لينكولن</span>
-                </h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">التعريف بالحديث</span>
+                        <span class="text-xs text-slate-500">/me</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/me ▓مرحــبـــا سيدي اسمي ► اسمك ◄ ]عريف[ من جيش Lincoln meكيف يمكنني مساعدتك؟ ▓</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
                 </button>
             </div>
 
-            <form id="macroForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
-                <input type="hidden" id="macroId">
-                
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1.5">اسم الأمر / التكتيك</label>
-                    <input type="text" id="macroTitle" required placeholder="مثال: تحذير البوابة الرئيسية" class="w-full bg-slate-950 border border-dark-border focus:border-emerald-500 text-sm rounded-xl px-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">طلب المغادرة المبدئي</span>
+                        <span class="text-xs text-slate-500">/do</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/do اذا لم يكن لديك اسالة من فضلك غادر هذا المكان الان واذا لم تغادر بعد دقيقة سوف اطلق عليك النار</p>
                 </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
 
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1.5">الفئة العسكرية</label>
-                    <select id="macroCategory" class="w-full bg-slate-950 border border-dark-border focus:border-emerald-500 text-sm rounded-xl px-3.5 py-2.5 text-slate-200 focus:outline-none">
-                        <option value="base">تأمين القاعدة والخطوط</option>
-                        <option value="radio">شفرات الراديو والاتصال</option>
-                        <option value="patrol">الدوريات والاشتباك</option>
-                        <option value="rp">أوامر الـ RP والرتب</option>
-                    </select>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">شروط الانضمام</span>
+                        <span class="text-xs text-slate-500">/me</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/me - اذا كنت تريد الانضمام للجيش يجب ان يكون مستواك فوق الـ 5 ويجب ان يكون لديك حساب في الديسكورد وان تكون في سيرفر اللعبة ( One state Na )</p>
                 </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
 
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1.5">نص الماكرو (الذي سيتم نسخه)</label>
-                    <textarea id="macroText" required rows="3" placeholder="مثال: [Lincoln Army]: منطقة عسكرية مغلقة! ابتعد فوراً أو سيتم التعامل." class="w-full bg-slate-950 border border-dark-border focus:border-emerald-500 text-sm rounded-xl px-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none resize-none"></textarea>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">انتهاء المهلة (العد الـ 5 ثواني)</span>
+                        <span class="text-xs text-slate-500">/do</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/do انتهت الدقيقة من فضلك غادر هذا المنطقه الان لديك 5 ثواني اذا لما تتحرك سوف اطلق عليك النار سوف ابدا العد من الان...!</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">التحذير الأول</span>
+                        <span class="text-xs text-slate-500">/do</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/do █ تحــذيــر الاول ◄█من فضلك غادر هذا المنطقه!...</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">التحذير الثاني (الصاعق)</span>
+                        <span class="text-xs text-slate-500">/do</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/do █ تحــذيــر الثاني ◄█غادر هذا المنطقه هذا التحذير الثاني اذا لما تغادر سوف استخدم سلاح الصاعق بعد 3 ثواني ▓ سوف يتم العد الان ▓</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">التحذير الثالث (إطلاق النار)</span>
+                        <span class="text-xs text-slate-500">/do</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/do █ تحــذيــر الثالث ◄█لديك 5 ثواني اذا لما تغادر سوف اطلق عليك النار ▓سوف يتم العد الان▓</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">إشعار: دخيل بوابه 1</span>
+                        <span class="text-xs text-slate-500">/flobby</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  ◄اشــعـــار►دخيل في باب 1 ذاهب الي المركز انتبهو!...</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">إشعار: دخيل بوابه 2</span>
+                        <span class="text-xs text-slate-500">/flobby</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  ◄اشــعـــار►دخيل في باب 2 ذاهب الي المركز انتبهو!...</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/10 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">إشعار: دخيل في المطار</span>
+                        <span class="text-xs text-slate-500">/flobby</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  ◄اشــعـــار►دخيل في المطار ذاهب الي المركز انتبهو!...</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+
+            <!-- Command Item -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-amber-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded font-bold">إشعارات: تم التعامل مع الدخيل</span>
+                        <span class="text-xs text-slate-500">/flobby</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  █ تــم التــعــامل مع الدخيـــل █</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ الأمر
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 2: EVENT COMMANDS -->
+        <section id="tab-events" class="tab-content hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="col-span-1 md:col-span-2 mb-2">
+                <h2 class="text-xl font-bold text-rose-400 flex items-center gap-2 border-r-4 border-rose-500 pr-3">
+                    <i class="fa-solid fa-skull"></i> أوامر قيادة الأحداث للجيش (/flobby)
+                </h2>
+            </div>
+
+            <!-- Event 1 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">1. افتتاحية الحدث</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby مرحبا! أنا قائد الحدث . في هذا الحدث، سأكون قائد الحدث ! أصمدوا أيها الجنود ! المرجو من الكل التوقف عن المراقبة !!! في غضون 15 دقيقة، سنظهِر قوتنا. دافعوا عن قاعدتنا بكل ما لديكم. معا، سنحقق النصر! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 1 💀
+                </button>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">2. التوجه للمركز للدفاع</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby (قائد الحدث)  ليتوجه الكل للمركز. وقت الحدث يجب الدفاع عن مستودعاتنا و قاعدتنا  !!! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط مرة وحدة 2 💀
+                </button>
+            </div>
+
+            <!-- Event 3 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">3. استدعاء الرتب (0-8)</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  (قائد الحدث) رتبه (0-1-2-3-4-5-6-7-8) توجه الى المركز من فضلك!!! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 3 💀
+                </button>
+            </div>
+
+            <!-- Event 4 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">4. التجهيز والذخيرة</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby (قائد الحدث) غــيــر ستراتك والتقط الذخيرة، واتخذ مواقعك! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 4 💀
+                </button>
+            </div>
+
+            <!-- Event 5 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">5. إغلاق الراديو</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby (قائد الحدث) يحظر التحدث عبر الراديو. يتحدث القادة  فقط. إذا كان التحدث مهما، فاستخدم الراديو. 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 5 💀
+                </button>
+            </div>
+
+            <!-- Event 6 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">6. الثبات في الموقع</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  (قائد الحدث) ممنوع تسلق المرتفعات أو تغيير الموقع أثناء الحدث 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 6 💀
+                </button>
+            </div>
+
+            <!-- Event 7 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">7. منع استخدام الطعام</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby   (قائد الحدث) لا تستخدم الطعام أثناء  الحدث! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 7 💀
+                </button>
+            </div>
+
+            <!-- Event 8 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">8. حظر دخول المقر</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  (قائد الحدث) ممنوع دخول المقر اثناء الحدث ! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 8 💀
+                </button>
+            </div>
+
+            <!-- Event 9 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">9. إغلاق المايكروفون</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby (قائد الحدث) الميكروفون مغلق وقت الحدث! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 9 💀
+                </button>
+            </div>
+
+            <!-- Event 10 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">10. منع الطلق العشوائي</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  (قائد الحدث) الطلق العشوائي / المسافات البعيدة ممنوع وقت الحدث ! 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 10 💀
+                </button>
+            </div>
+
+            <!-- Event 11 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-rose-500/20 text-rose-400 text-xs px-2.5 py-1 rounded font-bold">11. تفقد المستودعات</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  (قائد الحدث) كيف هو وضع المستودعات. 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 11 💀
+                </button>
+            </div>
+
+            <!-- Event 12 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-emerald-500/20 text-emerald-400 text-xs px-2.5 py-1 rounded font-bold">12. إعلان الانتصار</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby  (قائد الحدث) شكرا لكم ايها الجنود للدفاع عم المستودعات لمدة 15 دقيقة. لقد حققنا إنتصار لصالحنا .لقد عملنا كفريق واحد و انا فخور بكم. 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 12 💀
+                </button>
+            </div>
+
+            <!-- Event 13 -->
+            <div class="card bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-rose-500/50 transition flex flex-col justify-between col-span-1 md:col-span-2">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-amber-500/20 text-amber-400 text-xs px-2.5 py-1 rounded font-bold">13. صورة النصر الجماعية</span>
+                        <span class="text-xs text-slate-500">قائد الحدث</span>
+                    </div>
+                    <p class="command-text text-sm bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 font-mono text-right dir-ltr select-all">/flobby (قائد الحدث) كــفــو ابــطــال ليتويجه جميع الجنود للمركز لاخد الصوره 💀</p>
+                </div>
+                <button onclick="copyText(this)" class="mt-3 w-full bg-slate-800 hover:bg-rose-500 hover:text-slate-950 text-rose-400 font-bold py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-regular fa-copy"></i> نسخ بالضغط 13 💀
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 3: RP RULES & PENALTIES -->
+        <section id="tab-rules-rp" class="tab-content hidden space-y-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-2xl font-black text-amber-400 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-gavel"></i> قواعد فصيل الجيش والعقوبات (Roleplay)
+                </h2>
+                <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                    إليك القواعد والعقوبات الخاصة بجماعة (فصيل) الجيش. يرجى قراءتها بعناية وتذكر دائمًا أن كونك جنديًا يتطلب الصبر والمعرفة بأسلوب اللعب التمثيلي.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">1. التصرف غير المحترم</h3>
+                        <p class="text-xs text-slate-400 mb-2">التصرف بطريقة غير محترمة تجاه الزملاء والمدنيين.</p>
+                        <span class="inline-block bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2 py-1 rounded">العقوبة: توبيخ واحد أو فصل الجندي (حسب قرار القائد).</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">2. مخاطبة الرتب العليا</h3>
+                        <p class="text-xs text-slate-400 mb-2">يجب مخاطبة الرتب العليا باستخدام "سيدي" / "سيدتي".</p>
+                        <span class="inline-block bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs px-2 py-1 rounded">العقوبة: تحذير واحد.</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-rose-600 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">3. حظر الفساد والرشوة</h3>
+                        <p class="text-xs text-slate-400 mb-2">يحظر أي نوع من الفساد. طلب رشوة (أموال، بضائع أو خدمات) أو قبولها من أعضاء الفصيل أو الشرطة أو اللاعبين.</p>
+                        <span class="inline-block bg-rose-600 text-slate-950 font-bold text-xs px-2 py-1 rounded">العقوبة: فصل الجندي مباشرة.</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">4. استخدام القوة والأسلحة</h3>
+                        <p class="text-xs text-slate-400 mb-2">استخدام الأسلحة/القوة دون تحذير. يجب أن يكون السبب مقنعاً (تحديد حياة، أو اقتحام القاعدة).</p>
+                        <span class="inline-block bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2 py-1 rounded">العقوبة: توبيخ واحد أو فصل الجندي.</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">5. استخدام شاحنة "Carrier"</h3>
+                        <p class="text-xs text-slate-400 mb-2">لا يمكن للجنود أخذ السيارة الخاصة "Carrier" دون إذن من الجنرالات أو النواب أو القائد.</p>
+                        <span class="inline-block bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs px-2 py-1 rounded">العقوبة: تحذير واحد.</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">6. التسلسل الهرمي والأوامر</h3>
+                        <p class="text-xs text-slate-400 mb-2">عدم مراعاة التسلسل الهرمي / عدم اتباع أوامر الجنرالات أو النواب أو القائد.</p>
+                        <span class="inline-block bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2 py-1 rounded">العقوبة: توبيخ واحد أو فصل الموظف.</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">7. استخدام مركبات الشركة لشخصي</h3>
+                        <p class="text-xs text-slate-400 mb-2">استخدام مركبات الفصيل لأغراض شخصية.</p>
+                        <span class="inline-block bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2 py-1 rounded">العقوبة: توبيخ واحد أو فصل الجندي.</span>
+                    </div>
+
+                    <!-- Rule Item -->
+                    <div class="bg-slate-950 border-r-4 border-amber-500 p-4 rounded-l-xl">
+                        <h3 class="font-bold text-slate-200 text-base mb-1">8. مغادرة القاعدة العسكرية</h3>
+                        <p class="text-xs text-slate-400 mb-2">مغادرة القاعدة بالزي الرسمي و/أو بالسلاح دون إذن صريح من القيادة.</p>
+                        <span class="inline-block bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2 py-1 rounded">العقوبة: توبيخ واحد.</span>
+                    </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-2">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-all">إلغاء</button>
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg transition-all border border-emerald-400/20">حفظ الأمر</button>
+                <!-- Warning System Box -->
+                <div class="mt-6 bg-slate-950 border border-amber-500/30 rounded-xl p-4 text-center">
+                    <p class="text-amber-400 font-bold text-sm">
+                        <i class="fa-solid fa-triangle-exclamation"></i> نظام التحذيرات والتوبيخ:
+                    </p>
+                    <p class="text-slate-300 text-xs mt-1">
+                        كل <span class="text-amber-400 font-bold">تحذيرين</span> يعادلان <span class="text-amber-400 font-bold">توبيخًا واحدًا</span>. الوصول إلى <span class="text-rose-500 font-bold">3 توبيخات</span> يعني الإزالة والمغادرة الفورية من منصب الجندي.
+                    </p>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        </section>
 
-    <!-- Footer -->
-    <footer class="bg-dark-card border-t border-dark-border py-4 mt-8">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>Lincoln Army Fast-Macro Console — OneState RP</span>
-            <span class="text-emerald-500/80 font-mono">STATUS: OPERATIONAL // SECURE</span>
-        </div>
-    </footer>
+        <!-- TAB 4: RANKS & STRUCTURE -->
+        <section id="tab-ranks" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-2xl font-black text-amber-400 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-users-gear"></i> هيكل الرتب الإشرافية - جيش Lincoln
+                </h2>
 
-    <!-- JavaScript Logic -->
-    <script>
-        // Preset Default Macros for Lincoln Army
-        const defaultMacros = [
-            // Base Defense & Perimeter
-            { id: 'army-1', title: 'تحذير اقتراب من قاعدة لينكولن', category: 'base', text: 'تحذير عسكري من جيش لينكولن! أنت تقترب من منطقة عسكرية محظورة، تراجع فوراً لسلامتك!', isDefault: true },
-            { id: 'army-2', title: 'تحذير نهائي وقاتل (كود أحمر)', category: 'base', text: 'تحذير نهائي! مغادرة المنطقة خلال 5 ثوانٍ وإلا سيتم فتح النار المباشرة بداعي التسلل!', isDefault: true },
-            { id: 'army-3', title: 'إغلاق البوابة الرئيسية (Gate Lockdown)', category: 'base', text: '[Lincoln Army]: إغلاق البوابات الرئيسية للقاعدة وتفعيل حالة التأمين القصوى كود-RED!', isDefault: true },
-            { id: 'army-4', title: 'تفتيش المركبات عند المدخل', category: 'base', text: '/me يطلب من السائق إطفاء المحرك وإبراز الهوية العسكرية أو التصريح قبل الدخول', isDefault: true },
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            // Tactical Radio Codes
-            { id: 'army-5', title: 'راديو - نداء جاري الدورية (Code 1)', category: 'radio', text: '[الراديو العسكري]: وحدة لينكولن-1 تبدأ دورية تمشيطية في القطاع الشمالي، الوضع أمن (Code 1).', isDefault: true },
-            { id: 'army-6', title: 'راديو - اشتباك وإطلاق نار (Code 3)', category: 'radio', text: '[الراديو العسكري]: كود 3! تعامل مع أهداف معادية في موقعنا الحالي، يرجى إرسال تعزيزات فورا!', isDefault: true },
-            { id: 'army-7', title: 'راديو - حظر جوي وإسقاط طيران', category: 'radio', text: '[الراديو العسكري]: تنبيه لكافة الوحدات، تحليق طيران غير مصرح به فوق القاعدة، تجهيز الدفاعات الجوية.', isDefault: true },
-            { id: 'army-8', title: 'راديو - إخلاء وسحب مصابين', category: 'radio', text: '[الراديو العسكري]: ميدي إيفاك عاجل! لدينا عنصر مصاب في الميدان بحاجة إلى إسعاف سريع.', isDefault: true },
-
-            // Patrol & Engagement
-            { id: 'army-9', title: 'استيقاف مرتكب مخالفة تكتيكية', category: 'patrol', text: 'من جيش لينكولن: أوقف المركبة جانب الطريق فوراً وانزل ويداك فوق رأسك!', isDefault: true },
-            { id: 'army-10', title: 'تجريد الموقوف من السلاح', category: 'patrol', text: '/me يقوم بسحب أسلحة المشتبه به وتأمينها في الحزام التكتيكي قبل نقل الحراسة', isDefault: true },
-            { id: 'army-11', title: 'إنشاء حاجز تفتيش عسكري', category: 'patrol', text: '[Lincoln Army]: إقامة نقطة تفتيش عسكرية مؤقتة، يرجى التخفيف من السرعة والتزام المسار.', isDefault: true },
-
-            // RP & Salutes / Ranks
-            { id: 'army-12', title: 'أداء التحية العسكرية (Salute)', category: 'rp', text: '/me يقف باستقامة يؤدي التحية العسكرية للضابط المسؤول بحزم', isDefault: true },
-            { id: 'army-13', title: 'تقديم بطاقة العضوية والبطاقة العسكرية', category: 'rp', text: '/me يخرج الشارة العسكرية لجيش لينكولن ويبرزها للتأكد من الرتبة والهوية', isDefault: true },
-            { id: 'army-14', title: 'تقديم التقرير الميداني', category: 'rp', text: '/me يقدم التقرير الميداني للقيادة مع بيان تفاصيل الدورية والملاحظات', isDefault: true }
-        ];
-
-        // State Management
-        let customMacros = JSON.parse(localStorage.getItem('lincoln_custom_macros') || '[]');
-        let currentCategory = 'all';
-        let searchQuery = '';
-
-        // Category Badge Details
-        const categoryMap = {
-            base: { label: 'القاعدة والتأمين', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
-            radio: { label: 'راديو عسكري', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-            patrol: { label: 'اشتباك ودورية', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-            rp: { label: 'RP ورتب', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
-        };
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            renderMacros();
-            updateCustomCount();
-        });
-
-        // Get All Combined Macros
-        function getAllMacros() {
-            return [...defaultMacros, ...customMacros];
-        }
-
-        // Render Cards
-        function renderMacros() {
-            const grid = document.getElementById('macrosGrid');
-            const emptyState = document.getElementById('emptyState');
-            grid.innerHTML = '';
-
-            const all = getAllMacros();
-            const filtered = all.filter(macro => {
-                const matchesCategory = 
-                    currentCategory === 'all' ? true :
-                    currentCategory === 'custom' ? !macro.isDefault :
-                    macro.category === currentCategory;
-
-                const matchesSearch = 
-                    macro.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                    macro.text.toLowerCase().includes(searchQuery.toLowerCase());
-
-                return matchesCategory && matchesSearch;
-            });
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-
-                filtered.forEach(macro => {
-                    const badge = categoryMap[macro.category] || { label: 'عسكري', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' };
-                    const card = document.createElement('div');
-                    card.className = 'bg-dark-card border border-dark-border hover:border-emerald-700/60 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 shadow-md group relative';
-
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md border ${badge.color}">
-                                    ${badge.label}
-                                </span>
-                                ${!macro.isDefault ? `
-                                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onclick="editMacro('${macro.id}')" class="text-slate-400 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-800 transition-all text-xs" title="تعديل">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button onclick="deleteMacro('${macro.id}')" class="text-slate-400 hover:text-rose-400 p-1 rounded-lg hover:bg-slate-800 transition-all text-xs" title="حذف">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-                                ` : '<span class="text-[10px] text-slate-600 font-mono">SOP</span>'}
-                            </div>
-                            <h4 class="font-bold text-slate-100 text-sm mb-1 flex items-center gap-1.5">
-                                <i class="fa-solid fa-angle-left text-xs text-emerald-500"></i>
-                                ${escapeHtml(macro.title)}
-                            </h4>
-                            <p class="text-xs text-slate-300 line-clamp-3 bg-slate-950/80 p-2.5 rounded-xl border border-slate-900 font-mono dir-rtl text-right break-words mb-4 select-all">
-                                ${escapeHtml(macro.text)}
-                            </p>
+                    <!-- Federal Leadership -->
+                    <div class="bg-slate-950 border border-amber-500/40 p-4 rounded-xl col-span-1 md:col-span-2 lg:col-span-3">
+                        <h3 class="font-bold text-amber-400 text-base mb-2 border-b border-slate-800 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-crown text-amber-400"></i> القيادة الفدرالية العليا
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            <p class="text-slate-300"><span class="text-amber-400 font-bold">اللواء الفدرالي:</span> @『FG』 • 𝑯𝒂𝒎𝒛𝒂 𓄀 <span class="text-xs bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded">(13)</span></p>
+                            <p class="text-slate-300"><span class="text-amber-400 font-bold">النائب العام الفدرالي:</span> @𝑫𝑭𝑮 • 𝑳𝒊𝒃𝒚𝒂 𝑻𝒓𝒊𝒑𝒐𝒍 <span class="text-xs bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded">(12)</span></p>
                         </div>
-                        <button onclick="copyToClipboard('${escapeJsString(macro.text)}')" class="w-full bg-slate-900 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-900/50 hover:border-emerald-500 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 active:scale-95 group-hover:shadow-lg group-hover:shadow-emerald-600/20">
-                            <i class="fa-regular fa-copy text-sm"></i>
-                            <span>نسخ الأمر التكتيكي</span>
-                        </button>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-        }
+                    </div>
 
-        // Copy Handler
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            try {
-                document.execCommand('copy');
-                showToast('تم نسخ الأمر إلى الحافظة!');
-            } catch (err) {
-                showToast('حدث خطأ في النسخ تلقائياً');
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        }
+                    <!-- Interview Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق المحاورين</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @𝐴𝐵𝑈 𝐻𝐴𝐸𝐷𝐸𝑅 (11)</li>
+                            <li><span class="text-slate-400">النائب:</span> @𝕄ℝ 𝕂𝕃𝕀ℝ (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Mr Murtada (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Daddy Nawaf (9)</li>
+                            <li><span class="text-slate-400">النائبة:</span> @✮⋆˙ Ms Doody ˙⋆✮ (9)</li>
+                        </ul>
+                    </div>
 
-        // Show Toast Notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
+                    <!-- Guidance Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق الإرشاد</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @亗𝐁𝐎 𝐀𝐋𝐋𝐀𝐌 亗 (11)</li>
+                            <li><span class="text-slate-400">النائب:</span> @𝙷𝚊𝚜𝚜𝚊𝚗 𝙸𝚚 ✮ (9)</li>
+                            <li><span class="text-slate-400">النائبة:</span> @✿ 𝑴𝒔 𝑨𝒔𝒎𝒂𝒂 ✿ (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Mohmad Hmam (9)</li>
+                        </ul>
+                    </div>
 
-            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
-            toast.classList.add('opacity-100', 'translate-y-0');
+                    <!-- Events Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق الأحداث</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @˙⋆✮Falcon KwT✮⋆˙ (10)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Ahmad joba (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Abo Dalal 🖋️ (9)</li>
+                        </ul>
+                    </div>
 
-            setTimeout(() => {
-                toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10');
-            }, 2500);
-        }
+                    <!-- ASF Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق القوات الخاصة ASF</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @Ahmed Aldory (10)</li>
+                            <li><span class="text-slate-400">النائب:</span> @BASHIRNASER (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Albaron Khalid 🇵🇸 (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @𝕴𝖘𝖑𝖆𝖒 𝕵𝖔 (9)</li>
+                        </ul>
+                    </div>
 
-        // Filter Category
-        function setCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.remove('bg-emerald-600', 'text-white');
-                tab.classList.add('bg-dark-card', 'border', 'border-dark-border', 'text-slate-300');
-            });
+                    <!-- Training Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق التدريب</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @Mr Hiktoor (10)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Mr.Hsko 🇸🇩 (9)</li>
+                            <li><span class="text-slate-400">النائبة:</span> @Ms Ema (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Mr Shaittan (9)</li>
+                        </ul>
+                    </div>
 
-            const activeTab = document.getElementById(`tab-${cat}`);
-            if (activeTab) {
-                activeTab.classList.remove('bg-dark-card', 'border', 'border-dark-border', 'text-slate-300');
-                activeTab.classList.add('bg-emerald-600', 'text-white');
-            }
+                    <!-- Discipline & Protection -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق الإنضباط والحماية</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @Abu Yasoob (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Flamer Flamer (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Ym Slayer (9)</li>
+                        </ul>
+                    </div>
 
-            renderMacros();
-        }
+                    <!-- Activities Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق الفعاليات</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> @𝑰𝒎 𝑺𝒐𝒏™ (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Sir Hssen🦅👑 (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @𝒮𝑜 𝒦𝓈𝒶 𐙚 (9)</li>
+                        </ul>
+                    </div>
 
-        // Search Input Handler
-        function filterMacros() {
-            searchQuery = document.getElementById('searchInput').value;
-            renderMacros();
-        }
+                    <!-- Audit Team -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-400 text-sm mb-2 border-b border-slate-800 pb-2">فريق التدقيق</h4>
+                        <ul class="space-y-1 text-xs text-slate-300">
+                            <li><span class="text-slate-400">القائد:</span> - - - -</li>
+                            <li><span class="text-slate-400">النائب:</span> @IM 𝕃𝕚𝕠𝕟𝕟𓅇 (9)</li>
+                            <li><span class="text-slate-400">النائب:</span> @Hossam Dveo (9)</li>
+                        </ul>
+                    </div>
 
-        // Modal Controls
-        function openModal(editId = null) {
-            const modal = document.getElementById('macroModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const form = document.getElementById('macroForm');
+                </div>
+            </div>
+        </section>
 
-            form.reset();
-            document.getElementById('macroId').value = '';
-
-            if (editId) {
-                const macro = customMacros.find(m => m.id === editId);
-                if (macro) {
-                    document.getElementById('macroId').value = macro.id;
-                    document.getElementById('macroTitle').value = macro.title;
-                    document.getElementById('macroCategory').value = macro.category;
-                    document.getElementById('macroText').value = macro.text;
-                    modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-500"></i> <span>تعديل الأمر العسكري</span>`;
-                }
-            } else {
-                modalTitle.innerHTML = `<i class="fa-solid fa-square-plus text-emerald-500"></i> <span>إضافة أمر تكتيكي لجيش لينكولن</span>`;
-            }
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('macroModal').classList.add('hidden');
-        }
-
-        // Handle Add/Edit Form Submission
-        function handleFormSubmit(e) {
-            e.preventDefault();
-
-            const id = document.getElementById('macroId').value;
-            const title = document.getElementById('macroTitle').value.trim();
-            const category = document.getElementById('macroCategory').value;
-            const text = document.getElementById('macroText').value.trim();
-
-            if (!title || !text) return;
-
-            if (id) {
-                const index = customMacros.findIndex(m => m.id === id);
-                if (index !== -1) {
-                    customMacros[index] = { ...customMacros[index], title, category, text };
-                    showToast('تم تعديل الأمر بنجاح!');
-                }
-            } else {
-                const newMacro = {
-                    id: 'custom-' + Date.now(),
-                    title,
-                    category,
-                    text,
-                    isDefault: false
-                };
-                customMacros.unshift(newMacro);
-                showToast('تمت إضافة الأمر العسكري بنجاح!');
-            }
-
-            saveCustomMacros();
-            closeModal();
-            renderMacros();
-            updateCustomCount();
-        }
-
-        // Delete Custom Macro
-        function deleteMacro(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الأمر العسكري؟')) {
-                customMacros = customMacros.filter(m => m.id !== id);
-                saveCustomMacros();
-                renderMacros();
-                updateCustomCount();
-                showToast('تم حذف الأمر المخصص');
-            }
-        }
-
-        // Edit Custom Macro trigger
-        function editMacro(id) {
-            openModal(id);
-        }
-
-        // Save Custom Macros to LocalStorage
-        function saveCustomMacros() {
-            localStorage.setItem('lincoln_custom_macros', JSON.stringify(customMacros));
-        }
-
-        // Update Counter for Custom Items
-        function updateCustomCount() {
-            document.getElementById('custom-count').textContent = customMacros.length;
-        }
-
-        // Utility: Escape HTML
-        function escapeHtml(str) {
-            return str.replace(/[&<>"']/g, function(m) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                }[m];
-            });
-        }
-
-        // Utility: Escape String for inline JS parameters
-        function escapeJsString(str) {
-            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
-        }
-    </script>
-</body>
-</html>
+        <!-- TAB 5: INTERNAL RULES -->
+        <section id="tab-rules-internal" class="tab-content hidden space-y-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-2xl font-black text-amber-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-list"></i> قوانين فصيل الجيش الداخلية
+                </h2>
+                <p class="text-slate-400 text-xs mb-4">هذه القوانين تعتبر بم
